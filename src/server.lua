@@ -87,7 +87,27 @@ AddEventHandler = function(eventName, callback)
 
             if nonces[source].nonce ~= clientNonce then
                 -- The client provided an invalid nonce, or no nonce at all.
-                return error("Invalid nonce")
+
+                -- Loop over all exports in the config
+                for _, exportData in pairs(Utils.getConfig().exports) do
+                    local data = Utils.split(exportData, ":")
+                    local resource, export = data[1], data[2]
+
+                    local success, err = pcall(function()
+                        -- Trigger the export
+                        return exports[resource][export](nil, {
+                            source = source,
+                            event = eventName,
+                            clientNonce = clientNonce
+                        })
+                    end)
+
+                    if not success and err then
+                        error(err)
+                    end
+                end
+
+                return
             end
         end
 

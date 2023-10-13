@@ -35,3 +35,27 @@ Using Ding is straightforward. To effectively utilize it, please follow these st
 
    server_scripts { ... }
    ```
+
+## Configuration
+
+To configure Ding you use convars in your server config.
+
+### invalidNonceExports
+
+This convar specifies which exports should be triggered when an invalid nonce is provided during an event. The data passed to this export is of the following structure:
+
+```lua
+{
+    source = 1,
+    event = "testevent",
+    clientNonce = "anything"
+}
+```
+
+#### Example:
+
+```bash
+setr ding:invalidNonceExports ["anticheat:banPlayer", "foo:bar"]
+```
+
+In this example, when an invalid nonce is detected, the `anticheat:banPlayer` and `foo:bar` exports will be executed as specified in the configuration.
