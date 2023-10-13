@@ -27,33 +27,33 @@ local nonces = {}
 
 -- Default events we dont want to interrupt
 local defaultEvents = {
-    "entityCreated",
-    "entityCreating",
-    "entityRemoved",
-    "onResourceListRefresh",
-    "onResourceStart",
-    "onResourceStarting",
-    "onResourceStop",
-    "onServerResourceStart",
-    "onServerResourceStop",
-    "playerConnecting",
-    "playerEnteredScope",
-    "playerJoining",
-    "playerLeftScope",
-    "ptFxEvent",
-    "removeAllWeaponsEvent",
-    "startProjectileEvent",
-    "weaponDamageEvent",
-    "CEventName",
-    "entityDamaged",
-    "gameEventTriggered",
-    "mumbleConnected",
-    "mumbleDisconnected",
-    "onClientResourceStart",
-    "onClientResourceStop",
-    "populationPedCreating",
-    "playerDropped",
-    "rconCommand",
+    entityCreated = true,
+    entityCreating = true,
+    entityRemoved = true,
+    onResourceListRefresh = true,
+    onResourceStart = true,
+    onResourceStarting = true,
+    onResourceStop = true,
+    onServerResourceStart = true,
+    onServerResourceStop = true,
+    playerConnecting = true,
+    playerEnteredScope = true,
+    playerJoining = true,
+    playerLeftScope = true,
+    ptFxEvent = true,
+    removeAllWeaponsEvent = true,
+    startProjectileEvent = true,
+    weaponDamageEvent = true,
+    CEventName = true,
+    entityDamaged = true,
+    gameEventTriggered = true,
+    mumbleConnected = true,
+    mumbleDisconnected = true,
+    onClientResourceStart = true,
+    onClientResourceStop = true,
+    populationPedCreating = true,
+    playerDropped = true,
+    rconCommand = true,
 }
 
 ---Generate and set a seed for the given client
@@ -71,7 +71,7 @@ local function setSeedForClient(client)
 end
 
 -- Give the client a seed when they join.
-_AddEventHandler("playerJoining", setSeedForClient)
+_RegisterNetEvent("ding", setSeedForClient)
 
 -- Handle player leaving
 _AddEventHandler("playerDropped", function()
@@ -79,9 +79,7 @@ _AddEventHandler("playerDropped", function()
 end)
 
 local isInternalEvent = function(e)
-    return defaultEvents[e] or not -- If it's a FiveM event
-        GetInvokingResource() or   -- triggered internally
-        e:find("^__cfx_export_.*")
+    return defaultEvents[e] or e:find("^__cfx_export_.*")
 end
 
 --Overwrite the default AddEventHandler to use nonces instead
@@ -113,55 +111,55 @@ AddEventHandler = function(eventName, callback)
 
     -- The actual event handler that handles nonces.
     return _AddEventHandler(Utils.formatEventName(eventName), function(clientNonce, ...)
-        local args = { ... }
-
         local isClient = type(source) == "number" and source > 0
 
-        -- If the source is a client, we run the checks for the nonces
-        -- otherwise the source is a server, which we can trust.
-        if isClient then
-            if not nonces[source] then
-                -- We dont have nonce data for this client.
-                return error(("Nonce not found for event '%s'"):format(eventName))
-            end
-
-            nonces[source] = Utils.getNextNonce(nonces[source])
-
-            if nonces[source].nonce ~= clientNonce then
-                -- The client provided an invalid nonce, or no nonce at all.
-
-                -- Loop over all exports in the config
-                for _, exportData in pairs(Utils.getConfig().exports) do
-                    local data = Utils.split(exportData, ":")
-                    local resource, export = data[1], data[2]
-
-                    local success, err = pcall(function()
-                        -- Trigger the export
-                        return exports[resource][export](nil, {
-                            source = source,
-                            event = eventName,
-                            clientNonce = clientNonce
-                        })
-                    end)
-
-                    if not success and err then
-                        error(err)
-                    end
-                end
-
-                return
-            end
+        -- If the source is not a client it must be the server
+        -- and we can trust the server so we can just run the callback
+        if not isClient then
+            return callback(...)
         end
 
-        return isClient and callback(source, table.unpack(args)) or callback(table.unpack(args))
+        if not nonces[source] then
+            -- We dont have nonce data for this client.
+            return error(("Nonce not found for event '%s'"):format(eventName))
+        end
+
+        nonces[source] = Utils.getNextNonce(nonces[source])
+
+        if nonces[source].nonce ~= clientNonce then
+            -- The client provided an invalid nonce, or no nonce at all.
+
+            -- Loop over all exports in the config
+            for _, exportData in pairs(Utils.getConfig().exports) do
+                local data = Utils.split(exportData, ":")
+                local resource, export = data[1], data[2]
+
+                local success, err = pcall(function()
+                    -- Trigger the export
+                    return exports[resource][export](nil, {
+                        source = source,
+                        event = eventName,
+                        clientNonce = clientNonce
+                    })
+                end)
+
+                if not success and err then
+                    error(err)
+                end
+            end
+
+            return
+        end
+
+        return callback(...)
     end)
 end
 
 -- Overwrite the default RegisterNetEvent
 RegisterNetEvent = function(eventName, callback)
     _RegisterNetEvent(eventName)
-    _RegisterNetEvent(Utils.formatEventName(eventName))
-    return AddEventHandler(eventName, callback)
+    local netEvent = _RegisterNetEvent(Utils.formatEventName(eventName))
+    return callback and AddEventHandler(eventName, callback) or netEvent
 end
 
 -- Overwrite the default TriggerEvent

@@ -29,7 +29,7 @@ end)
 -- Overwrite the default TriggerServerEvent
 function TriggerServerEvent(eventName, ...)
     nonceData = Utils.getNextNonce(nonceData)
-    return _TriggerServerEvent(Utils.formatEventName(eventName), nonceData.nonce, ...)
+    return _TriggerServerEvent(Utils.formatEventName(eventName), nonceData.nonce, table.unpack({ ... }))
 end
 
 return true
