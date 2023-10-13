@@ -4,7 +4,7 @@ For support please visit my [support discord](https://boris.foo/discord), or mak
 
 Ding is a utility for protecting FiveM events by utilizing random nonces to prevent replay attacks, thereby stopping cheaters from triggering your server events.
 
-**Important Note:** While Ding provides valuable protection against most cheating attempts, it is not a fix-all solution. Very experienced cheaters may still find ways to circumvent its security measures. Therefore, it is essential to implement additional layers of protection and security in your code to ensure the integrity of your server.
+**Important Note:** While Ding provides protection against most cheating attempts, it is not a fix-all solution. Very experienced cheaters may still find ways to circumvent its security measures. Therefore, it is important to implement additional protection and security in your code to ensure the security of your server.
 
 ## Explanation
 
