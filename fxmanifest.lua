@@ -8,7 +8,7 @@ version "1.0.0"
 repository "https://github.com/borisnliscool/ding"
 
 files {
-    "src/utils.lua",
-    "src/client.lua",
+    "src/import/utils.lua",
+    "src/import/client.lua",
     "import.lua"
 }

@@ -3,7 +3,7 @@ local RESOURCE = GetCurrentResourceName()
 
 -- Function to import the utils
 local function importUtils()
-    local file = "src/utils.lua"
+    local file = "src/import/utils.lua"
     local datafile = LoadResourceFile("ding", file)
     local func, err = load(datafile, ('@ding/%s'):format(file))
 

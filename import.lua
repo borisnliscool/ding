@@ -1,7 +1,7 @@
 local VERSION = IsDuplicityVersion() and "server" or "client"
 local RESOURCE = GetCurrentResourceName()
 
-local file = ("src/%s.lua"):format(VERSION)
+local file = ("src/import/%s.lua"):format(VERSION)
 local datafile = LoadResourceFile("ding", file)
 local func, err = load(datafile, ('@ding/%s'):format(file))
 
