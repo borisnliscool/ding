@@ -6,6 +6,10 @@ Ding is a utility for protecting FiveM events by utilizing random nonces to prev
 
 **Important Note:** While Ding provides valuable protection against most cheating attempts, it is not a fix-all solution. Very experienced cheaters may still find ways to circumvent its security measures. Therefore, it is essential to implement additional layers of protection and security in your code to ensure the integrity of your server.
 
+## Explanation
+
+Ding overwrites the default `TriggerServerEvent`, `AddEventHandler` and `RegisterServerEvent` functions to require nonces. A nonce is a partially random number generated through a function that relies on a seed and the previous nonce. The server generates the seed and shares it with the client upon connection. Each time an event is triggered, it necessitates a nonce. Both the server and the client independently compute this nonce using the seed and the previous nonce to ensure they arrive at the same value. If the calculated nonces match, the event proceeds as expected. If there's a mismatch, the event is canceled because an incorrect nonce was provided.
+
 ## Usage
 
 Using Ding is straightforward. To effectively utilize it, please follow these steps:
