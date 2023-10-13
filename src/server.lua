@@ -24,6 +24,34 @@ local Utils = importUtils()
 ---@type { seed: number, nonce?: number }[]
 local nonces = {}
 
+local defaultEvents = {
+    "entityCreated",
+    "entityCreating",
+    "entityRemoved",
+    "onResourceListRefresh",
+    "onResourceStart",
+    "onResourceStarting",
+    "onResourceStop",
+    "onServerResourceStart",
+    "onServerResourceStop",
+    "playerConnecting",
+    "playerEnteredScope",
+    "playerJoining",
+    "playerLeftScope",
+    "ptFxEvent",
+    "removeAllWeaponsEvent",
+    "startProjectileEvent",
+    "weaponDamageEvent",
+    "CEventName",
+    "entityDamaged",
+    "gameEventTriggered",
+    "mumbleConnected",
+    "mumbleDisconnected",
+    "onClientResourceStart",
+    "onClientResourceStop",
+    "populationPedCreating",
+}
+
 ---Generate and set a seed for the given client
 ---@param client? number
 local function setSeedForClient(client)
@@ -35,7 +63,7 @@ local function setSeedForClient(client)
     local seed = os.time()
 
     nonces[target] = { seed = seed }
-    TriggerClientEvent(("ding:%s:init"):format(RESOURCE), target, seed)
+    return TriggerClientEvent(("ding:%s:init"):format(RESOURCE), target, seed)
 end
 
 -- Give the client a seed when they join.
@@ -48,6 +76,11 @@ end)
 
 --Overwrite the default AddEventHandler to use nonces instead
 AddEventHandler = function(eventName, callback)
+    -- If it's a FiveM event, we return the default behavior
+    if defaultEvents[eventName] then
+        return _AddEventHandler(eventName, callback)
+    end
+
     -- Add an event handler to handle the events where scripts are not using ding.
     _AddEventHandler(eventName, function()
         if source == "" then
@@ -70,7 +103,7 @@ AddEventHandler = function(eventName, callback)
     end)
 
     -- The actual event handler that handles nonces.
-    _AddEventHandler(Utils.formatEventName(eventName), function(clientNonce, ...)
+    return _AddEventHandler(Utils.formatEventName(eventName), function(clientNonce, ...)
         local args = { ... }
 
         local isClient = type(source) == "number" and source > 0
@@ -125,12 +158,12 @@ end
 RegisterNetEvent = function(eventName, callback)
     _RegisterNetEvent(eventName)
     _RegisterNetEvent(Utils.formatEventName(eventName))
-    AddEventHandler(eventName, callback)
+    return AddEventHandler(eventName, callback)
 end
 
 -- Overwrite the default TriggerEvent
 TriggerEvent = function(eventName, ...)
-    _TriggerEvent(Utils.formatEventName(eventName), nil, table.unpack({ ... }))
+    return _TriggerEvent(Utils.formatEventName(eventName), nil, table.unpack({ ... }))
 end
 
 -- Loop over all players and give them a seed.
