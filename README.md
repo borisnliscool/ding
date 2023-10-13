@@ -78,3 +78,7 @@ In this example, setting ding:warnUnused to true will enable error warnings for 
 ### DING_READY
 
 Ding also exposes a `DING_READY` boolean on the client side, so other scripts can check if Ding is ready to be used.
+
+## License
+
+Distributed under the GPL-3.0 License. See [LICENSE](https://github.com/borisnliscool/bnl-housing/blob/main/LICENSE) for more information.
