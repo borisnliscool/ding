@@ -1,6 +1,7 @@
-# Ding
 
-> not a doorbell script
+![Ding logo](https://github.com/borisnliscool/ding/assets/60477582/45732f6e-0616-4ce0-87c6-ddc7501ee6fb)
+
+<h2 align="center"><a href="https://docs.boris.foo/ding">For installation, configuration and usage visit the docs</a></h2>
 
 For support please visit my [support discord](https://boris.foo/discord), or make an issue. Pull requests are welcome.
 
@@ -8,74 +9,11 @@ Ding is a utility for protecting FiveM events by utilizing random nonces to prev
 
 **Important Note:** While Ding provides protection against most cheating attempts, it is not a fix-all solution. Very experienced cheaters may still find ways to pass its security measures. That said, it's way better than not using it, and it'll stop pretty much any skiddy.
 
+
 ## Explanation
 
 Ding overwrites the default `TriggerServerEvent`, `AddEventHandler` and `RegisterServerEvent` functions to implement nonces. 
 A nonce is a partially random number generated through a function that relies on a seed and the previous nonce. The server generates the seed and shares it with the client upon connection. Each time an event is triggered, it requires a nonce. Both the server and the client independently compute this nonce using the seed and the previous nonce to ensure they arrive at the same value. If the calculated nonces match, the event proceeds as expected. If there's a mismatch, the event is canceled because an incorrect nonce was provided.
-
-## Usage
-
-Using Ding is straightforward, simply follow these steps:
-
-1. **Resource Load Order**: Make sure to start the Ding resource before all other resources in your server configuration. This ensures that Ding is available for other resources to use.
-
-   ```bash
-   ensure ding
-   ```
-
-2. **Import Order**: In your `fxmanifest.lua`, ensure that the `shared_script "@ding/import.lua"` line is the first script imported. This is crucial for Ding to overwrite default methods correctly.
-
-   Here's how you should structure your `fxmanifest.lua`:
-
-   ```lua
-   fx_version '...'
-   game '...'
-
-   -- Ensure that Ding is loaded first
-   shared_script '@ding/import.lua'
-
-   client_scripts { ... }
-
-   server_scripts { ... }
-   ```
-
-## Configuration
-
-To configure Ding you use convars in your server config.
-
-### invalidNonceExports
-
-This convar specifies which exports should be triggered when an invalid nonce is provided during an event. The data passed to this export is of the following structure:
-
-```lua
-{
-    source = 1,
-    event = "testevent",
-    clientNonce = "anything"
-}
-```
-
-#### Example:
-
-```bash
-setr ding:invalidNonceExports ["anticheat:banPlayer", "foo:bar"]
-```
-
-In this example, when an invalid nonce is detected, the `anticheat:banPlayer` and `foo:bar` exports will be executed as specified in the configuration.
-
-### warnUnused
-
-This convar controls whether Ding should display errors when server scripts attempt to use Ding events incorrectly. While not essential, enabling this option can be helpful for debugging purposes.
-
-#### Example:
-
-```bash
-setr ding:warnUnused true
-```
-
-In this example, setting ding:warnUnused to true will enable error warnings for incorrect usage of Ding events in server scripts.
-
-### DING_READY
 
 Ding also exposes a `DING_READY` boolean on the client side, so other scripts can check if Ding is ready to be used.
 
