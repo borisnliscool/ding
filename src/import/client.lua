@@ -1,3 +1,5 @@
+DING_READY = false
+
 local _TriggerServerEvent = TriggerServerEvent
 local RESOURCE = GetCurrentResourceName()
 
@@ -24,6 +26,7 @@ local nonceData = {}
 RegisterNetEvent(("ding:%s:init"):format(RESOURCE), function(seed)
     math.randomseed(seed)
     nonceData = { seed = seed }
+    DING_READY = true
 end)
 
 -- Overwrite the default TriggerServerEvent
