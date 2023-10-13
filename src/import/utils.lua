@@ -13,7 +13,8 @@ return {
     end,
     getConfig = function()
         return {
-            exports = json.decode(GetConvar('ding:invalidNonceExports', '[]'))
+            exports = json.decode(GetConvar('ding:invalidNonceExports', '[]')),
+            warnUnused = GetConvar("ding:warnUnused", "false") == "true"
         }
     end,
     -- https://stackoverflow.com/a/1579673

@@ -91,13 +91,15 @@ AddEventHandler = function(eventName, callback)
     -- Add an event handler to handle the events where scripts are not using ding.
     _AddEventHandler(eventName, function()
         if source == "" then
-            error(
-                ("server script '%s' tried to trigger event '%s' which is protected by ding, without using ding.")
-                :format(
-                    GetInvokingResource(),
-                    eventName
+            if Utils.getConfig().warnUnused then
+                error(
+                    ("server script '%s' tried to trigger event '%s' which is protected by ding, without using ding.")
+                    :format(
+                        GetInvokingResource(),
+                        eventName
+                    )
                 )
-            )
+            end
             return
         end
 
