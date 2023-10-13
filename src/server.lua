@@ -3,6 +3,7 @@ local _AddEventHandler = AddEventHandler
 local _TriggerEvent = TriggerEvent
 local RESOURCE = GetCurrentResourceName()
 
+-- Function to import the utils
 local function importUtils()
     local file = "src/utils.lua"
     local datafile = LoadResourceFile("ding", file)
@@ -24,6 +25,7 @@ local Utils = importUtils()
 ---@type { seed: number, nonce?: number }[]
 local nonces = {}
 
+-- Default events we dont want to interrupt
 local defaultEvents = {
     "entityCreated",
     "entityCreating",

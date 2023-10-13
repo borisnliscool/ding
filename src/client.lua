@@ -1,6 +1,7 @@
 local _TriggerServerEvent = TriggerServerEvent
 local RESOURCE = GetCurrentResourceName()
 
+-- Function to import the utils
 local function importUtils()
     local file = "src/utils.lua"
     local datafile = LoadResourceFile("ding", file)
@@ -25,6 +26,7 @@ RegisterNetEvent(("ding:%s:init"):format(RESOURCE), function(seed)
     nonceData = { seed = seed }
 end)
 
+-- Overwrite the default TriggerServerEvent
 function TriggerServerEvent(eventName, ...)
     nonceData = Utils.getNextNonce(nonceData)
     return _TriggerServerEvent(Utils.formatEventName(eventName), nonceData.nonce, ...)
