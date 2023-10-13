@@ -50,6 +50,8 @@ local defaultEvents = {
     "onClientResourceStart",
     "onClientResourceStop",
     "populationPedCreating",
+    "playerDropped",
+    "rconCommand",
 }
 
 ---Generate and set a seed for the given client
@@ -74,10 +76,15 @@ _AddEventHandler("playerDropped", function()
     nonces[source] = nil
 end)
 
+local isInternalEvent = function(e)
+    return defaultEvents[e] or not -- If it's a FiveM event
+        GetInvokingResource() or   -- triggered internally
+        e:find("^__cfx_export_.*")
+end
+
 --Overwrite the default AddEventHandler to use nonces instead
 AddEventHandler = function(eventName, callback)
-    -- If it's a FiveM event, we return the default behavior
-    if defaultEvents[eventName] then
+    if isInternalEvent(eventName) then
         return _AddEventHandler(eventName, callback)
     end
 
@@ -144,13 +151,7 @@ AddEventHandler = function(eventName, callback)
             end
         end
 
-        local success, err = pcall(function()
-            return isClient and callback(source, table.unpack(args)) or callback(table.unpack(args))
-        end)
-
-        if not success and err then
-            error(("^1Error whilst executing callback '%s' for client #%s\n%s^0"):format(eventName, source, err))
-        end
+        return isClient and callback(source, table.unpack(args)) or callback(table.unpack(args))
     end)
 end
 
@@ -163,6 +164,10 @@ end
 
 -- Overwrite the default TriggerEvent
 TriggerEvent = function(eventName, ...)
+    if isInternalEvent(eventName) then
+        return _TriggerEvent(eventName, table.unpack({ ... }))
+    end
+
     return _TriggerEvent(Utils.formatEventName(eventName), nil, table.unpack({ ... }))
 end
 
