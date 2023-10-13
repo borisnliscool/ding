@@ -14,13 +14,13 @@ Ding overwrites the default `TriggerServerEvent`, `AddEventHandler` and `Registe
 
 Using Ding is straightforward. To use it, please follow these steps:
 
-1. **Resource Load Order**: Make sure to start the Ding resource before all other resources in your server configuration. This ensures that Ding is active and ready to protect your events.
+1. **Resource Load Order**: Make sure to start the Ding resource before all other resources in your server configuration. This ensures that Ding is available for other resources to use.
 
    ```
    ensure ding
    ```
 
-2. **Import Order**: In your `fxmanifest.lua`, ensure that the `shared_script "@ding/import.lua"` line is the first script imported. This is crucial for Ding to set up its protection measures correctly.
+2. **Import Order**: In your `fxmanifest.lua`, ensure that the `shared_script "@ding/import.lua"` line is the first script imported. This is crucial for Ding to overwrite default methods correctly.
 
    Here's how you should structure your `fxmanifest.lua`:
 
