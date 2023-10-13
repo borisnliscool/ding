@@ -39,12 +39,15 @@ local function setSeedForClient(client)
 end
 
 -- Give the client a seed when they join.
-RegisterServerEvent("playerJoining", setSeedForClient)
+_AddEventHandler("playerJoining", setSeedForClient)
+
+-- Handle player leaving
+_AddEventHandler("playerDropped", function()
+    nonces[source] = nil
+end)
 
 --Overwrite the default AddEventHandler to use nonces instead
 AddEventHandler = function(eventName, callback)
-    print("AddEventHandler")
-
     -- Add an event handler to handle the events where scripts are not using ding.
     _AddEventHandler(eventName, function()
         if source == "" then
