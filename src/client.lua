@@ -27,7 +27,7 @@ end)
 
 function TriggerServerEvent(eventName, ...)
     nonceData = Utils.getNextNonce(nonceData)
-    _TriggerServerEvent(Utils.formatEventName(eventName), nonceData.nonce, ...)
+    return _TriggerServerEvent(Utils.formatEventName(eventName), nonceData.nonce, ...)
 end
 
 return true
