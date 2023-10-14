@@ -2,6 +2,7 @@ local _RegisterNetEvent = RegisterNetEvent
 local _AddEventHandler = AddEventHandler
 local _TriggerEvent = TriggerEvent
 local RESOURCE = GetCurrentResourceName()
+local ding = exports.ding
 
 -- Function to import the utils
 local function importUtils()
@@ -21,9 +22,6 @@ local function importUtils()
 end
 
 local Utils = importUtils()
-
----@type { seed: number, nonce?: number }[]
-local nonces = {}
 
 -- Default events we dont want to interrupt
 local defaultEvents = {
@@ -55,28 +53,6 @@ local defaultEvents = {
     "playerDropped",
     "rconCommand",
 }
-
----Generate and set a seed for the given client
----@param client? number
-local function setSeedForClient(client)
-    -- Use source if available otherwise use the given client
-    -- Used so we can pass this function into the playerJoining event
-    local target = source or client --[[@as integer]]
-
-    -- Set the seed to the current time
-    local seed = os.time()
-
-    nonces[target] = { seed = seed }
-    return TriggerClientEvent(("ding:%s:init"):format(RESOURCE), target, seed)
-end
-
--- Give the client a seed when they join.
-_RegisterNetEvent("ding", setSeedForClient)
-
--- Handle player leaving
-_AddEventHandler("playerDropped", function()
-    nonces[source] = nil
-end)
 
 local isInternalEvent = function(e)
     return Utils.contains(defaultEvents, e) or e:find("^__cfx_export_.*")
@@ -121,14 +97,14 @@ AddEventHandler = function(eventName, callback)
             return callback(...)
         end
 
-        if not nonces[source] then
+        local nonceData = ding:getNextNonce(source)
+
+        if not nonceData then
             -- We dont have nonce data for this client.
             return error(("Nonce not found for event '%s'"):format(eventName))
         end
 
-        nonces[source] = Utils.getNextNonce(nonces[source])
-
-        if nonces[source].nonce ~= clientNonce then
+        if nonceData.nonce ~= clientNonce then
             -- The client provided an invalid nonce, or no nonce at all.
 
             -- Loop over all exports in the config
@@ -172,16 +148,5 @@ TriggerEvent = function(eventName, ...)
 
     return _TriggerEvent(Utils.formatEventName(eventName), nil, table.unpack({ ... }))
 end
-
--- Loop over all players and give them a seed.
--- Only used in development when scripts are restarted
-CreateThread(function()
-    Wait(100)
-    for i = 1, 10000 do -- Looping over all players could be done better
-        if GetPlayerPed(i) ~= 0 then
-            setSeedForClient(i)
-        end
-    end
-end)
 
 return true

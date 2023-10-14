@@ -1,7 +1,6 @@
-DING_READY = false
-
 local _TriggerServerEvent = TriggerServerEvent
 local RESOURCE = GetCurrentResourceName()
+local ding = exports.ding
 
 -- Function to import the utils
 local function importUtils()
@@ -21,18 +20,14 @@ local function importUtils()
 end
 
 local Utils = importUtils()
-local nonceData = {}
-
-RegisterNetEvent(("ding:%s:init"):format(RESOURCE), function(seed)
-    math.randomseed(seed)
-    nonceData = { seed = seed }
-    DING_READY = true
-end)
 
 -- Overwrite the default TriggerServerEvent
 function TriggerServerEvent(eventName, ...)
-    nonceData = Utils.getNextNonce(nonceData)
-    return _TriggerServerEvent(Utils.formatEventName(eventName), nonceData.nonce, table.unpack({ ... }))
+    return _TriggerServerEvent(
+        Utils.formatEventName(eventName),
+        ding:getNextNonce().nonce,
+        table.unpack({ ... })
+    )
 end
 
 return true

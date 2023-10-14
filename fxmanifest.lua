@@ -7,6 +7,7 @@ author "borisnliscool"
 version "1.0.0"
 repository "https://github.com/borisnliscool/ding"
 
+server_script "src/server.lua"
 client_script "src/client.lua"
 
 files {
