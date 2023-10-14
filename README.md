@@ -1,5 +1,4 @@
-
-![Ding logo](https://github.com/borisnliscool/ding/assets/60477582/45732f6e-0616-4ce0-87c6-ddc7501ee6fb)
+![ding](https://github.com/borisnliscool/ding/assets/60477582/b192cbbe-a0b0-4e4a-8452-6c99b98ac2c2)
 
 <h2 align="center"><a href="https://docs.boris.foo/ding">For installation, configuration and usage visit the docs</a></h2>
 
