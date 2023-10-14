@@ -27,33 +27,33 @@ local nonces = {}
 
 -- Default events we dont want to interrupt
 local defaultEvents = {
-    entityCreated = true,
-    entityCreating = true,
-    entityRemoved = true,
-    onResourceListRefresh = true,
-    onResourceStart = true,
-    onResourceStarting = true,
-    onResourceStop = true,
-    onServerResourceStart = true,
-    onServerResourceStop = true,
-    playerConnecting = true,
-    playerEnteredScope = true,
-    playerJoining = true,
-    playerLeftScope = true,
-    ptFxEvent = true,
-    removeAllWeaponsEvent = true,
-    startProjectileEvent = true,
-    weaponDamageEvent = true,
-    CEventName = true,
-    entityDamaged = true,
-    gameEventTriggered = true,
-    mumbleConnected = true,
-    mumbleDisconnected = true,
-    onClientResourceStart = true,
-    onClientResourceStop = true,
-    populationPedCreating = true,
-    playerDropped = true,
-    rconCommand = true,
+    "entityCreated",
+    "entityCreating",
+    "entityRemoved",
+    "onResourceListRefresh",
+    "onResourceStart",
+    "onResourceStarting",
+    "onResourceStop",
+    "onServerResourceStart",
+    "onServerResourceStop",
+    "playerConnecting",
+    "playerEnteredScope",
+    "playerJoining",
+    "playerLeftScope",
+    "ptFxEvent",
+    "removeAllWeaponsEvent",
+    "startProjectileEvent",
+    "weaponDamageEvent",
+    "CEventName",
+    "entityDamaged",
+    "gameEventTriggered",
+    "mumbleConnected",
+    "mumbleDisconnected",
+    "onClientResourceStart",
+    "onClientResourceStop",
+    "populationPedCreating",
+    "playerDropped",
+    "rconCommand",
 }
 
 ---Generate and set a seed for the given client
@@ -79,12 +79,13 @@ _AddEventHandler("playerDropped", function()
 end)
 
 local isInternalEvent = function(e)
-    return defaultEvents[e] or e:find("^__cfx_export_.*")
+    return Utils.contains(defaultEvents, e) or e:find("^__cfx_export_.*")
 end
 
 --Overwrite the default AddEventHandler to use nonces instead
 AddEventHandler = function(eventName, callback)
-    if isInternalEvent(eventName) then
+    -- If it's an internal event or if it's whitelisted, run native behavior
+    if isInternalEvent(eventName) or Utils.contains(Utils.getConfig().whitelistedEvents, eventName) then
         return _AddEventHandler(eventName, callback)
     end
 

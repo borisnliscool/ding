@@ -14,7 +14,8 @@ return {
     getConfig = function()
         return {
             exports = json.decode(GetConvar('ding:invalidNonceExports', '[]')),
-            warnUnused = GetConvar("ding:warnUnused", "false") == "true"
+            warnUnused = GetConvar("ding:warnUnused", "false") == "true",
+            whitelistedEvents = json.decode(GetConvar("ding:whitelistedEvents", "[]"))
         }
     end,
     -- https://stackoverflow.com/a/1579673
@@ -35,5 +36,13 @@ return {
             table.insert(Table, cap)
         end
         return Table
+    end,
+    contains = function(tab, value)
+        for _, v in pairs(tab) do
+            if v == value then
+                return true
+            end
+        end
+        return false
     end
 }
