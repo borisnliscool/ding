@@ -92,12 +92,11 @@ AddEventHandler = function(eventName, callback)
     _AddEventHandler(eventName, function()
         if source == "" then
             if Utils.getConfig().warnUnused then
+                local invoker = GetInvokingResource()
+
                 error(
-                    ("server script '%s' tried to trigger event '%s' which is protected by ding, without using ding.")
-                    :format(
-                        GetInvokingResource(),
-                        eventName
-                    )
+                    ("event '%s' triggered by '%s' was not handled by '%s' because '%s' is using Ding and '%s' is not.")
+                    :format(eventName, invoker, RESOURCE, RESOURCE, invoker)
                 )
             end
             return
