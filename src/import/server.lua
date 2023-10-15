@@ -117,7 +117,8 @@ AddEventHandler = function(eventName, callback)
                     return exports[resource][export](nil, {
                         source = source,
                         event = eventName,
-                        clientNonce = clientNonce
+                        clientNonce = clientNonce,
+                        invoker = GetInvokingResource()
                     })
                 end)
 
