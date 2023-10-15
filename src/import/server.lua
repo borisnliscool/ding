@@ -111,6 +111,7 @@ AddEventHandler = function(eventName, callback)
             for _, exportData in pairs(Utils.getConfig().exports) do
                 local data = Utils.split(exportData, ":")
                 local resource, export = data[1], data[2]
+                local invoker = GetInvokingResource()
 
                 local success, err = pcall(function()
                     -- Trigger the export
@@ -118,7 +119,7 @@ AddEventHandler = function(eventName, callback)
                         source = source,
                         event = eventName,
                         clientNonce = clientNonce,
-                        invoker = GetInvokingResource()
+                        invoker = invoker
                     })
                 end)
 
