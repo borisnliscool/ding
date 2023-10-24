@@ -52,6 +52,7 @@ local defaultEvents = {
     "populationPedCreating",
     "playerDropped",
     "rconCommand",
+    "explosionEvent"
 }
 
 local isInternalEvent = function(e)
